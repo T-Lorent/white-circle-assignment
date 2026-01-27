@@ -4,17 +4,20 @@ import { useEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageBubble } from "./message-bubble";
 import type { Message } from "@/lib/db/schema";
+import type { PiiRange } from "@/app/api/pii/scan/route";
 
 interface ChatMessagesProps {
   messages: Message[];
   streamingContent?: string;
   isStreaming?: boolean;
+  streamingPiiRanges?: PiiRange[];
 }
 
 export function ChatMessages({
   messages,
   streamingContent,
   isStreaming,
+  streamingPiiRanges = [],
 }: ChatMessagesProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -50,6 +53,7 @@ export function ChatMessages({
             role="assistant"
             content={streamingContent || ""}
             isStreaming={true}
+            piiRanges={streamingPiiRanges}
           />
         )}
         <div ref={bottomRef} />

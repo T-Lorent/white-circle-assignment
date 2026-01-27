@@ -123,3 +123,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Discord-like spoiler effect for PII hiding */
+.spoiler {
+  background-color: currentColor;
+  color: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0 2px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.spoiler:hover:not(.revealed) {
+  opacity: 0.8;
+}
+
+.spoiler.revealed {
+  background-color: var(--muted);
+  color: inherit;
+  user-select: text;
+}

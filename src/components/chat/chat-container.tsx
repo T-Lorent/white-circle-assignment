@@ -4,7 +4,9 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChatMessages } from "./chat-messages";
 import { ChatInput } from "./chat-input";
+import { usePiiScanner } from "@/hooks/use-pii-scanner";
 import type { Message } from "@/lib/db/schema";
+import type { PiiRange } from "@/app/api/pii/scan/route";
 
 interface ChatContainerProps {
   conversationId: string;
@@ -19,6 +21,18 @@ export function ChatContainer({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
+  const [streamingPiiRanges, setStreamingPiiRanges] = useState<PiiRange[]>([]);
+
+  // PII scanner for streaming content
+  const { piiRanges, scanText, reset: resetPiiScanner, finalScan } = usePiiScanner({
+    debounceMs: 500,
+    minChunkSize: 50,
+  });
+
+  // Update streaming PII ranges when scanner detects new PII
+  useEffect(() => {
+    setStreamingPiiRanges(piiRanges);
+  }, [piiRanges]);
 
   // Fetch messages when conversationId changes
   useEffect(() => {
@@ -56,6 +70,7 @@ export function ChatContainer({
       setMessages((prev) => [...prev, userMessage]);
       setIsStreaming(true);
       setStreamingContent("");
+      resetPiiScanner(); // Reset PII scanner for new message
 
       try {
         const response = await fetch("/api/chat", {
@@ -86,7 +101,11 @@ export function ChatContainer({
           const text = decoder.decode(value, { stream: true });
           fullResponse += text;
           setStreamingContent(fullResponse);
+          scanText(fullResponse); // Scan for PII progressively
         }
+
+        // Final scan to catch any remaining content
+        finalScan();
 
         // After streaming is complete, add the assistant message
         const assistantMessage: Message = {
@@ -110,7 +129,7 @@ export function ChatContainer({
         setIsStreaming(false);
       }
     },
-    [conversationId, isStreaming, router],
+    [conversationId, isStreaming, router, resetPiiScanner, scanText, finalScan],
   );
 
   return (
@@ -119,6 +138,7 @@ export function ChatContainer({
         messages={messages}
         streamingContent={streamingContent}
         isStreaming={isStreaming}
+        streamingPiiRanges={streamingPiiRanges}
       />
       <div className="p-4 pb-6">
         <div className="max-w-3xl mx-auto">
