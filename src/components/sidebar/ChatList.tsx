@@ -19,12 +19,10 @@ export function ChatList({ chats }: ChatListProps) {
   }
 
   return (
-    <ScrollArea className="flex-1 max-w-full">
-      <div className="flex flex-col gap-1 p-2">
-        {chats.map((chat) => (
-          <ChatItem key={chat.id} chat={chat} />
-        ))}
-      </div>
-    </ScrollArea>
+    <div className="flex flex-col gap-1 p-2">
+      {chats.map((chat) => (
+        <ChatItem key={chat.id} chat={chat} />
+      ))}
+    </div>
   );
 }

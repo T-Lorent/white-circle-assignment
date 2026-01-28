@@ -68,33 +68,36 @@ export function ChatItem({ chat }: ChatItemProps) {
     >
       <Link href={`/chat/${chat.id}`} className="absolute inset-0 z-2" />
 
-      <span className="min-w-24 flex-1 truncate text-sm">{chat.title}</span>
-      <span className="text-xs text-muted-foreground shrink-0">
-        {formatRelativeTime(chat.updated_at)}
-      </span>
+      <span className="flex-1 min-w-0 truncate text-sm">{chat.title}</span>
 
-      {/* THREE DOTS MENU */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded transition-opacity cursor-pointer z-4"
-          >
-            <MoreVertical className="size-4 text-muted-foreground" />
-          </Button>
-        </DropdownMenuTrigger>
+      <div className="flex items-center gap-2 shrink-0">
+        <span className="text-xs text-muted-foreground">
+          {formatRelativeTime(chat.updated_at)}
+        </span>
 
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={handleDelete}
-            className="text-destructive focus:text-destructive cursor-pointer"
-          >
-            <Trash2 className="size-4 mr-2" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+        {/* THREE DOTS MENU */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-fit rounded transition-opacity cursor-pointer z-4"
+            >
+              <MoreVertical className="size-4 text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={handleDelete}
+              className="text-destructive focus:text-destructive cursor-pointer"
+            >
+              <Trash2 className="size-4 mr-2" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 }
