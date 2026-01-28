@@ -9,13 +9,13 @@ interface ChatPageProps {
 export default async function ChatPage({ params }: ChatPageProps) {
   const { chatId } = await params;
   
-  const chat = getChat(chatId);
+  const chat = await getChat(chatId);
   
   if (!chat) {
     notFound();
   }
 
-  const messages = getMessages(chatId);
+  const messages = await getMessages(chatId);
 
   // Convert database messages to the format expected by ChatContainer
   const initialMessages = messages.map((msg) => ({

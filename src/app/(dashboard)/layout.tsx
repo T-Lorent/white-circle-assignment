@@ -4,13 +4,16 @@ import { getChats } from "@/lib/db";
 // COMPONENTS
 import { Sidebar } from "@/components/sidebar/Sidebar";
 
+// Force dynamic rendering - database calls require runtime
+export const dynamic = "force-dynamic";
+
 /*========== LAYOUT ==========*/
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const chats = getChats();
+  const chats = await getChats();
 
   return (
     <div className="flex w-full h-screen">

@@ -13,12 +13,12 @@ import {
 /*========== SERVER ACTIONS ==========*/
 
 export async function createChat(title: string): Promise<string> {
-  const chat = dbCreateChat(title);
+  const chat = await dbCreateChat(title);
   revalidatePath("/");
   return chat.id;
 }
 
 export async function deleteChat(id: string): Promise<void> {
-  dbDeleteChat(id);
+  await dbDeleteChat(id);
   revalidatePath("/");
 }

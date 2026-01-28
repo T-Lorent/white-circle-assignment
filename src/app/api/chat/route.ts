@@ -78,15 +78,15 @@ export async function POST(request: Request) {
 
   // Save user message to database if chatId is provided
   if (chatId && userMessage) {
-    createMessage(chatId, "user", userMessage.content);
+    await createMessage(chatId, "user", userMessage.content);
 
     // Auto-generate title from first message
-    const messageCount = getMessageCount(chatId);
+    const messageCount = await getMessageCount(chatId);
     if (messageCount === 1) {
       const title =
         userMessage.content.slice(0, 50) +
         (userMessage.content.length > 50 ? "..." : "");
-      updateChatTitle(chatId, title);
+      await updateChatTitle(chatId, title);
     }
   }
 
@@ -137,7 +137,7 @@ export async function POST(request: Request) {
 
       // Save assistant message to database after streaming completes
       if (chatId && fullResponse) {
-        createMessage(chatId, "assistant", fullResponse);
+        await createMessage(chatId, "assistant", fullResponse);
       }
 
       controller.close();
