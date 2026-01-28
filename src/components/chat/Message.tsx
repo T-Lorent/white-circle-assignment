@@ -1,7 +1,12 @@
 "use client";
 
 // LIBRARIES
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { Components } from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import { ReactNode } from "react";
+
+// COMPONENTS
+import { SpoilerText } from "./SpoilerText";
 
 // UTILS
 import { cn } from "@/lib/utils";
@@ -11,6 +16,20 @@ export interface MessageProps {
   role: "user" | "assistant";
   content: string;
 }
+
+/*========== CUSTOM MARKDOWN COMPONENTS ==========*/
+// Extend Components type to include custom <pii> element
+type ExtendedComponents = Components & {
+  pii?: React.ComponentType<{ children?: ReactNode }>;
+};
+
+// Custom components including non-standard HTML elements like <pii>
+const markdownComponents: ExtendedComponents = {
+  // Handle <pii> tags with SpoilerText component
+  pii: ({ children }: { children?: ReactNode }) => (
+    <SpoilerText>{children}</SpoilerText>
+  ),
+};
 
 /*========== COMPONENT ==========*/
 export function Message({ role, content }: MessageProps) {
@@ -36,7 +55,12 @@ export function Message({ role, content }: MessageProps) {
           "text-foreground prose-headings:text-foreground prose-strong:text-foreground prose-code:text-foreground",
         )}
       >
-        <ReactMarkdown>{content}</ReactMarkdown>
+        <ReactMarkdown
+          rehypePlugins={[rehypeRaw]}
+          components={markdownComponents}
+        >
+          {content}
+        </ReactMarkdown>
       </div>
     </div>
   );
